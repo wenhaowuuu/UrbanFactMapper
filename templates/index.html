@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Fact Mapper</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        
+        nav {
+            background-color: #333;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        
+        nav a:hover {
+            color: #ff6347;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+            text-align: center;
+        }
+        
+        h1 {
+            font-family: 'Impact', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .dropdown {
+            margin: 10px 0;
+        }
+        
+        .dropdown label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .dropdown select {
+            width: 200px;
+            padding: 5px;
+            font-size: 1rem;
+            border: 2px solid #333;
+            border-radius: 5px;
+        }
+        
+        .dropdown select:focus {
+            outline: none;
+            border-color: #ff6347;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: #ff6347;
+        }
+        
+        .result {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <div>
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/methodology">Methodology</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Urban Fact Mapper</h1>
+
+        <!-- Dropdowns for State, County, and Tract -->
+        <div class="dropdown">
+            <label for="state">State:</label>
+            <select id="state" name="state">
+                <option value="">Select a state</option>
+                {% for code, name in states %}
+                    <option value="{{ code }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="dropdown">
+            <label for="county">County:</label>
+            <select id="county" name="county" disabled>
+                <option value="">Select a county</option>
+                {% for code, name in counties %}
+                    <option value="{{ code }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="dropdown">
+            <label for="tract">Tract:</label>
+            <select id="tract" name="tract" disabled>
+                <option value="">Select a tract</option>
+            </select>
+        </div>
+
+        <button class="btn" id="fetch-data">Fetch Population</button>
+
+        <!-- Result Display -->
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        // Fetch counties when a state is selected
+        document.getElementById('state').addEventListener('change', async(e) => {
+            const state = e.target.value;
+            const countyDropdown = document.getElementById('county');
+            const tractDropdown = document.getElementById('tract');
+
+            if (state) {
+                const response = await fetch(`/counties?state=${state}`);
+                const counties = await response.json();
+                countyDropdown.innerHTML = '<option value="">Select a county</option>';
+                counties.forEach(([code, name]) => {
+                    countyDropdown.innerHTML += `<option value="${code}">${name}</option>`;
+                });
+                countyDropdown.disabled = false;
+                tractDropdown.disabled = true;
+                tractDropdown.innerHTML = '<option value="">Select a tract</option>';
+            } else {
+                countyDropdown.disabled = true;
+                tractDropdown.disabled = true;
+                countyDropdown.innerHTML = '<option value="">Select a county</option>';
+                tractDropdown.innerHTML = '<option value="">Select a tract</option>';
+            }
+        });
+
+        // Fetch tracts when a county is selected
+        document.getElementById('county').addEventListener('change', async(e) => {
+            const state = document.getElementById('state').value;
+            const county = e.target.value;
+            const tractDropdown = document.getElementById('tract');
+
+            if (state && county) {
+                const response = await fetch(`/tracts?state=${state}&county=${county}`);
+                const tracts = await response.json();
+                tractDropdown.innerHTML = '<option value="">Select a tract</option>';
+                tracts.forEach(tract => {
+                    tractDropdown.innerHTML += `<option value="${tract}">${tract}</option>`;
+                });
+                tractDropdown.disabled = false;
+            } else {
+                tractDropdown.disabled = true;
+                tractDropdown.innerHTML = '<option value="">Select a tract</option>';
+            }
+        });
+
+        // Fetch population data when the button is clicked
+        document.getElementById('fetch-data').addEventListener('click', async() => {
+            const state = document.getElementById('state').value;
+            const county = document.getElementById('county').value;
+            const tract = document.getElementById('tract').value;
+
+            if (state && county && tract) {
+                const response = await fetch(`/population?state=${state}&county=${county}&tract=${tract}`);
+                const data = await response.json();
+                if (data.population) {
+                    document.getElementById('result').innerText = `Population: ${data.population}`;
+                } else {
+                    document.getElementById('result').innerText = `Error: ${data.error}`;
+                }
+            } else {
+                document.getElementById('result').innerText = "Please select a state, county, and tract.";
+            }
+        });
+    </script>
+</body>
+
+</html>
