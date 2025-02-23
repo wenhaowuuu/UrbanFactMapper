@@ -1,20 +1,19 @@
 brotlipy==0.7.0
-certifi==2021.10.8
-cffi==1.15.0  # Replace with the correct version
-chardet==4.0.0  # Replace with the correct version
-conda==4.11.0
-conda-package-handling==1.7.3  # Replace with the correct version
-cryptography==3.4.7  # Replace with the correct version
-idna==2.10  # Replace with the correct version
+certifi==2023.7.22  # Updated to the latest version
+cffi==1.15.1  # Updated to the latest version
+chardet==5.1.0  # Updated to the latest version
+conda-package-handling==2.2.0  # Updated to the latest version
+cryptography==41.0.3  # Updated to the latest version
+idna==3.4  # Updated to the latest version
 numpy==1.24.2
 plotly==5.13.1
-pycosat==0.6.3
-pycparser==2.20  # Replace with the correct version
-pyOpenSSL==20.0.1  # Replace with the correct version
-PySocks==1.7.1  # Replace with the correct version
-requests==2.25.1  # Replace with the correct version
-ruamel-yaml-conda==0.15.80  # Replace with the correct version
-six==1.16.0  # Replace with the correct version
+pycosat==0.6.4  # Updated to the latest version
+pycparser==2.21  # Updated to the latest version
+pyOpenSSL==23.2.0  # Updated to the latest version
+PySocks==1.7.1  # Updated to the latest version
+requests==2.31.0  # Updated to the latest version
+ruamel-yaml==0.17.32  # Updated to the latest version
+six==1.16.0  # Updated to the latest version
 tenacity==8.2.2
-tqdm==4.62.3  # Replace with the correct version
-urllib3==1.26.6  # Replace with the correct version
+tqdm==4.65.0  # Updated to the latest version
+urllib3==2.0.4  # Updated to the latest version
