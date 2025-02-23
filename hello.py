@@ -86,7 +86,8 @@ def methods():
 
 # Run the app
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True) #explicitly bind the app to the port 0.0.0.0
 
 # in command line, run this:
 # python app.py
