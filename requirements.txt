@@ -1,3 +1,4 @@
+flask==2.2.3  # Use the latest stable version
 brotlipy==0.7.0
 certifi==2023.7.22  # Updated to the latest version
 cffi==1.15.1  # Updated to the latest version
@@ -7,7 +8,7 @@ cryptography==41.0.3  # Updated to the latest version
 idna==3.4  # Updated to the latest version
 numpy==1.24.2
 plotly==5.13.1
-# pycosat==0.6.4  # not found in deployment
+# pycosat==0.6.4  # not found in deployment - If your app does not involve solving logical or constraint-based problems, you likely do not need pycosat
 pycparser==2.21  # Updated to the latest version
 pyOpenSSL==23.2.0  # Updated to the latest version
 PySocks==1.7.1  # Updated to the latest version
