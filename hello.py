@@ -1,4 +1,14 @@
+### Urban Fact Mapper ###
 # Wenhao's first Flask app
+## Requirements
+#1 quick fact finder page (State - County - City - Tract)
+#2 city based mapper
+# user search for a city 
+# it checks for the stored ACS data downloaded from ACS API, filter to the county it belongs to
+# the app fetches the maps and charts for that city (previously run)
+# TBD: the app does the spatial join and clipping to the city boundary
+# TBD: the app creates the maps
+
 
 # # Step 1: Initialize the database
 # python init_db.py
@@ -71,6 +81,11 @@ def get_population():
     else:
         return jsonify({"error": "Data not found"}), 404
 
+# city reporter route
+@app.route("/city-reporter")
+def city_reporter():
+    """Render the City Reporter page."""
+    return render_template('city_reporter.html')
 
 # about route
 @app.route("/about")
