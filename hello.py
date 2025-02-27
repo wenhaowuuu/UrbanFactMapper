@@ -19,7 +19,7 @@
 # # Step 3: Start the Flask app
 # python hello.py
 
-
+import requests
 import sqlite3
 from flask import Flask, request, jsonify, g, render_template
 from database import fetch_census_data, get_states, get_counties, get_tracts
@@ -86,6 +86,55 @@ def get_population():
 def city_reporter():
     """Render the City Reporter page."""
     return render_template('city_reporter.html')
+
+# search city
+# @app.route('/search-city', methods=['GET'])
+# def search_city():
+#     """Fetch data for a given city."""
+#     city = request.args.get('city')
+#     # Replace this with actual logic to fetch city data from your database
+#     if city.lower() == "san francisco":
+#         return jsonify({"city": city, "population": 883305, "ami": 186600})
+#     else:
+#         return jsonify({"error": "City not found"}), 404
+
+
+@app.route('/search-city', methods=['GET'])
+def search_city():
+    """Fetch population data for a given city using the Census API."""
+    city = request.args.get('city')
+    state = "06"  # California
+
+    if not city:
+        return jsonify({"error": "Please enter a city name."}), 400
+
+# Ref: 
+# https://api.census.gov/data/2023/acs/acs5/examples.html
+# https://api.census.gov/data/2023/acs/acs5?get=NAME,B01001_001E&for=place:*&in=state:06
+    # Construct the API URL
+    api_url = f"https://api.census.gov/data/2023/acs/acs5?get=NAME,B01001_001E&for=place:*&in=state:{state}"
+
+    try:
+        # Make the API request
+        response = requests.get(api_url)
+        response.raise_for_status()  # Raise an error for bad responses (4xx or 5xx)
+        data = response.json()
+
+        # Find the city in the API response
+        for entry in data[1:]:  # Skip the header row
+            if city.lower() in entry[0].lower():  # Case-insensitive search
+                return jsonify({
+                    "city": entry[0],
+                    "population": entry[1],
+                    "state": entry[2],
+                    "place": entry[3]
+                })
+
+        # If the city is not found
+        return jsonify({"error": f"City '{city}' not found in California."}), 404
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": f"Failed to fetch data from Census API: {str(e)}"}), 500
 
 # about route
 @app.route("/about")
